@@ -16,9 +16,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. See <http://www.gnu.org/licenses/gpl.html>
 
-'''Standalone wrapper for legendastv.srtclean, to be used as a console script'''
+"""Standalone wrapper for SRT Cleaner, to be used as a console script"""
 
 import sys
-from legendastv import srtclean
+from srtcleaner import srtcleaner
 
-sys.exit(srtclean.main())
+sys.exit(srtcleaner())
