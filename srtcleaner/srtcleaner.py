@@ -170,6 +170,31 @@ def open_subtitle(filename, encoding=None, fallback=None):
         raise ParseError("error using encoding '%s': %r" % (encoding, e))
 
 
+def clean(subs, blacklistfile, rebuild_index=True):
+    try:
+        with open(blacklistfile, 'r', encoding='utf-8') as fp:
+            blacklist = fp.read().strip().split('\n\n')
+    except IOError:
+        return
+
+    deleted = []
+    for i, sub in reversed(list(enumerate(subs))):
+        for text in blacklist:
+            if text.replace('\\n', '\n').lower() in sub.text.lower():
+                deleted.append(sub)
+                del subs[i]
+                break
+
+    if deleted:
+        for item in reversed(deleted):
+            log.info(unicode(item).replace('\n', '\t').strip())
+        log.info("%d items deleted", len(deleted))
+        if rebuild_index:
+            subs.clean_indexes()
+
+    return bool(deleted)
+
+
 def main(argv=None):
     args = parseargs(argv)
     logging.basicConfig(level=args.loglevel, format='[%(levelname)-5s] %(message)s')
@@ -194,28 +219,3 @@ def main(argv=None):
             else:
                 for sub in subs:
                     print(unicode(sub).encode(args.output_encoding or subs.encoding))
-
-
-def clean(subs, blacklistfile, rebuild_index=True):
-    try:
-        with open(blacklistfile, 'r', encoding='utf-8') as fp:
-            blacklist = fp.read().strip().split('\n\n')
-    except IOError:
-        return
-
-    deleted = []
-    for i, sub in reversed(list(enumerate(subs))):
-        for text in blacklist:
-            if text.replace('\\n', '\n').lower() in sub.text.lower():
-                deleted.append(sub)
-                del subs[i]
-                break
-
-    if deleted:
-        for item in reversed(deleted):
-            log.info(unicode(item).replace('\n', '\t').strip())
-        log.info("%d items deleted", len(deleted))
-        if rebuild_index:
-            subs.clean_indexes()
-
-    return bool(deleted)
