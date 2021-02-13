@@ -10,7 +10,7 @@ Usage
 
 #### Library
 
-``` pycon
+```python
 import srtcleaner
 
 srtfile = '/data/series/Cosmos/Cosmos.S01E01.srt'
@@ -20,7 +20,7 @@ srtcleaner.srtcleaner(['--in-place', '--convert', 'UTF-8', srtfile])
 
 #### Command-line
 
-```sh
+```
 $ srtcleaner --help
 
 usage: srtcleaner [-h] [--quiet] [--verbose] [--recursive]
@@ -110,6 +110,29 @@ INSUBS\n
 
 L.O.T.S\n
 ```
+
+
+Requirements
+------------
+- [Pysrt](https://github.com/byroot/pysrt), to parse the SRT files
+- [file-magic](https://github.com/file/file), to detect encoding.
+
+**Note**: There are (at least) 3 python modules named `magic` available on
+PyPI, all wrappers to [`libmagic`](https://github.com/file/file),
+but with very distinct API:
+
+  - [file-magic](https://github.com/file/file), from `libmagic` project itself
+  - [python-magic](https://github.com/ahupp/python-magic)
+  - [filemagic](https://github.com/aliles/filemagic)
+
+SRT Cleaner supports any of the above `libmagic` wrappers, and on install pulls
+the one from the `file`/`libmagic` project. And all of them obviously requires
+`libmagic` to be installed on your system. It usually ships in the `file`
+package and comes pre-installed in most GNU/Linux distributions and MacOS.
+
+On Windows, the following could be used to install `libmagic`:
+- [file-windows](https://github.com/nscaife/file-windows)
+- [libmagicwin64](https://github.com/pidydx/libmagicwin64)
 
 
 Installing

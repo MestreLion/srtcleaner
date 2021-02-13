@@ -72,7 +72,7 @@ keywords         = "subtitles srt library"
 entry_points     = {'console_scripts': ['{__title__} = {__title__}:main'.format(**locals())]}
 install_requires = [
     'pysrt',
-    'python-magic',
+    'file-magic',
 ]
 extras_require   = {
 }

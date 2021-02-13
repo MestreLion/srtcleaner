@@ -24,14 +24,14 @@ import logging
 import shutil
 import sys
 
-#import chardet  # Ubuntu: python-chardet, required by pysrt
-
-# There's 3 different `magic` modules, all wrappers to libmagic, with different API:
-# - Debian/Ubuntu: python-magic (from `file` source package, https://github.com/file/file)
-# - Pypi: python-magic (weird API, https://github.com/ahupp/python-magic)
-# - Pypi: filemagic (modern API, well-documented. https://github.com/aliles/filemagic)
+# There's 3 `magic` modules in PyPI, all wrappers to libmagic, but with different API:
+# - file-magic,   https://github.com/file/file, from libmagic itself
+# - python-magic, https://github.com/ahupp/python-magic
+# - filemagic,    https://github.com/aliles/filemagic
+# `file-magic` is the one listed on setup.py, se we can assume it'll be available.
+# But must handle all 3 so we don't force user to create a venv. See detect_encoding()
 import magic
-import pysrt  # pypi: pysrt / Ubuntu (14.04 onwards): python-pysrt
+import pysrt
 
 from . import __about__ as a
 from . import apppaths
@@ -129,14 +129,14 @@ def find_subtitles(paths, recursive=False):
 def detect_encoding(filename, fallback=None):
     encoding = ""
 
-    # Debian's python-magic, from `file` upstream
+    # file-magic, from `libmagic` upstream
     if hasattr(magic.Magic, "file"):
         ms = magic.open(magic.MAGIC_MIME_ENCODING)  # @UndefinedVariable
         ms.load()
         encoding = ms.file(filename)
         ms.close()
 
-    # Pypi's python-magic
+    # python-magic
     elif hasattr(magic.Magic, "from_file"):
         ms = magic.Magic(mime_encoding=True)
         encoding = ms.from_file(filename)
@@ -150,10 +150,6 @@ def detect_encoding(filename, fallback=None):
     if encoding and encoding not in ['unknown-8bit', 'binary']:
         log.debug("Auto-detected encoding: '%s'", encoding)
         return encoding
-
-    #chardet is unreliable to detect Latin-1 (AKA ISO-8859-1/15, cp1252, windows-1252, etc)
-    #with open(filename, 'rb') as fp:
-    #    return chardet.detect(fp.read()).get('encoding')
 
     log.debug("Encoding auto-detection failed, using fallback: '%s'", fallback)
     return fallback
