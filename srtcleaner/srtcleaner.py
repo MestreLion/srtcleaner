@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+# SRT Cleaner - Clean up SRT subtitle files removing ads and misplaced credits
 #
-#    Copyright (C) 2014 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
+#    Copyright (C) 2021 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -32,7 +33,8 @@ import sys
 import magic
 import pysrt  # pypi: pysrt / Ubuntu (14.04 onwards): python-pysrt
 
-from . import g
+from . import __about__ as a
+from . import apppaths
 
 
 log = logging.getLogger(__name__)
@@ -94,7 +96,8 @@ def parseargs(argv=None):
                             "Useful when debugging and comparing original and modified subtitles")
 
     parser.add_argument('--blacklist', '-b', dest="blacklistfile",
-                        default=os.path.join(g.globals['config_dir'], "%s_blacklist.txt" % __name__.split('.')[-1]),
+                        default=os.path.join(apppaths.save_config_path(a.__title__),
+                                             "{}.conf".format(a.__title__)),
                         help="Blacklist file path. [Default: %(default)s]")
 
     parser.add_argument('paths',
