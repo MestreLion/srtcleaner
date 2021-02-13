@@ -21,6 +21,7 @@ import os
 import argparse
 import logging
 import shutil
+import sys
 
 #import chardet  # Ubuntu: python-chardet, required by pysrt
 
@@ -35,6 +36,14 @@ from . import g
 
 
 log = logging.getLogger(__name__)
+
+
+if sys.version_info[0] >= 3:
+    PY3 = True
+    unicode = str
+else:
+    PY3 = False
+    from io import open
 
 
 class ParseError(Exception):
@@ -185,13 +194,13 @@ def main(argv=None):
                 subs.save(encoding=args.output_encoding)
             else:
                 for sub in subs:
-                    print unicode(sub).encode(args.output_encoding or subs.encoding)
+                    print(unicode(sub).encode(args.output_encoding or subs.encoding))
 
 
 def clean(subs, blacklistfile, rebuild_index=True):
     try:
-        with open(blacklistfile, 'r') as fp:
-            blacklist = fp.read().decode('utf-8').strip().split('\n\n')
+        with open(blacklistfile, 'r', encoding='utf-8') as fp:
+            blacklist = fp.read().strip().split('\n\n')
     except IOError:
         return
 
