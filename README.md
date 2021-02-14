@@ -13,9 +13,10 @@ Usage
 ```python
 import srtcleaner
 
-srtfile = '/data/series/Cosmos/Cosmos.S01E01.srt'
+srtfiles = ['/data/TVSeries/Cosmos/Cosmos.S01E01.srt',
+            '/data/TVSeries/Cosmos/Cosmos.S01E02.srt']
 
-srtcleaner.srtcleaner(['--in-place', '--convert', 'UTF-8', srtfile])
+srtcleaner.srtcleaner([srtfiles], in_place=True, backup=False, convert='UTF-8')
 ```
 
 #### Command-line
@@ -23,45 +24,46 @@ srtcleaner.srtcleaner(['--in-place', '--convert', 'UTF-8', srtfile])
 ```
 $ srtcleaner --help
 
-usage: srtcleaner [-h] [--quiet] [--verbose] [--recursive]
-                  [--input-encoding ENCODING]
-                  [--input-fallback-encoding FALLBACK]
+usage: srtcleaner [-h] [-q | -v] [--recursive] [--input-encoding ENCODING]
+                  [--input-fallback-encoding FALLBACK_ENCODING]
                   [--convert OUTPUT_ENCODING] [--in-place] [--no-backup]
-                  [--no-rebuild-index] [--blacklist BLACKLISTFILE]
-                  paths [paths ...]
+                  [--no-rebuild-index] [--blacklist BLACKLISTPATH]
+                  srtpaths [srtpaths ...]
 
 Clean subtitles deleting items that matches entries in blacklist file. Useful
 to remove ads and misplaced credits
 
 positional arguments:
-  paths                 SRT file(s) or dir(s) to modify
+  srtpaths              SRT file(s) or dir(s) to modify
 
 optional arguments:
   -h, --help            show this help message and exit
-  --quiet, -q           suppress informative messages and summary statistics.
-  --verbose, -v         print additional information for each processed file.
-                        Overwrites --quiet.
+  -q, --quiet           Suppress informative messages and summary statistics.
+  -v, --verbose         Print additional information for each processed file.
   --recursive, -r       recurse inside directories.
   --input-encoding ENCODING, -e ENCODING
-                        encoding used in subtitles, if known. By default tries
+                        Encoding used in subtitles, if known. By default tries
                         to autodetect encoding.
-  --input-fallback-encoding FALLBACK, -f FALLBACK
-                        fallback encoding to read subtitles if encoding
+  --input-fallback-encoding FALLBACK_ENCODING, -f FALLBACK_ENCODING
+                        Fallback encoding to read subtitles if encoding
                         autodetection fails. [Default: windows-1252]
   --convert OUTPUT_ENCODING, -c OUTPUT_ENCODING
-                        convert subtitle encoding. By default uses same
-                        encoding as input.
+                        Convert subtitle encoding. By default output uses the
+                        same encoding as the input.
   --in-place, -i        Overwrite original file instead of outputting to
                         standard output
   --no-backup, -B       When using --in-place, do not create a backup file.
   --no-rebuild-index, -I
-                        do not rebuild subtitles indexes after removing items.
+                        Do not rebuild subtitles indexes after removing items.
                         Resulting SRT will not be strictly valid, although it
-                        will work in most players. Useful when debugging and
+                        will work in most players. Useful when debugging for
                         comparing original and modified subtitles
-  --blacklist BLACKLISTFILE, -b BLACKLISTFILE
-                        Blacklist file path.
-                        [Default: /home/user/.config/srtcleaner/srtcleaner.conf]
+  --blacklist BLACKLISTPATH, -b BLACKLISTPATH
+                        Blacklist file path. [Default:
+                        /home/user/.config/srtcleaner/srtcleaner.conf]
+
+Copyright (C) 2021 Rodrigo Silva License: GPLv3 or later, at your choice. See
+<http://www.gnu.org/licenses/gpl>
 
 $ srtcleaner --in-place -B -c 'UTF-8' '/data/series/Cosmos/Cosmos.S01E01.srt'
 [INFO ] Processing subtitle: '/data/series/Cosmos/Cosmos.S01E01.srt'
