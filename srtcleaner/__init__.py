@@ -33,7 +33,7 @@ from .__about__ import (
     __email__,
     __copyright__,
 )
-from .srtcleaner import srtcleaner
+from .srtcleaner import srtcleaner, cli
 
 # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
 import logging
