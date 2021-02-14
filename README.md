@@ -65,11 +65,15 @@ optional arguments:
 Copyright (C) 2021 Rodrigo Silva License: GPLv3 or later, at your choice. See
 <http://www.gnu.org/licenses/gpl>
 
-$ srtcleaner --in-place -B -c 'UTF-8' '/data/series/Cosmos/Cosmos.S01E01.srt'
-[INFO ] Processing subtitle: '/data/series/Cosmos/Cosmos.S01E01.srt'
-[INFO ] 27      00:01:00,000 --> 00:01:06,074   Advertise your product or brand here    contact www.OpenSubtitles.org today
-[INFO ] 649     00:42:03,305 --> 00:42:09,768   Support us and become VIP member        to remove all ads from www.OpenSubtitles.org
-[INFO ] 2 items deleted
+$ srtcleaner -v --in-place -B --convert 'UTF-8' '/data/series/Cosmos/Cosmos.S01E01.srt'
+[DEBUG] Auto-detected encoding: 'iso-8859-1'
+[INFO ] 20      00:00:45,653 --> 00:00:48,842   <b>UNITED       apresenta</b>
+[INFO ] 21      00:00:49,270 --> 00:00:52,638   <b>Legenda:     rickSG | .:FGMsp:.</b>
+[INFO ] 741     00:46:55,499 --> 00:46:58,557   UNITED  Quality is Everything!
+[INFO ] 3 items deleted
+
+$ srtcleaner -v --in-place -B --convert 'UTF-8' '/data/series/Cosmos/Cosmos.S01E01.srt'
+[DEBUG] Auto-detected encoding: 'utf-8'
 ```
 
 
@@ -82,9 +86,10 @@ before using `srtcleaner`.
 
 A record can span over multiple lines, so use a blank line to separate each record.
 Its text is matched against each SRT entry by a simple `text in entry` comparison,
-in _case-insentive_ way. So if the whole text is found as part of an entry, the whole
-entry is removed from the SRT file. Escape sequences such as '\n' or '\t' are also
-interpreted, use it when you want to include a newline at the end of the text to match.
+in a _case-insensitive_ way. So if the whole text is found as part of an entry,
+the whole entry is removed from the SRT file. Escape sequences such as '\n' and
+'\t' are also interpreted, so you can use '\n' when you want to include a newline
+at the end of the text to match.
 
 Example of a basic `srtcleaner.conf`:
 ```
@@ -143,15 +148,15 @@ Installing
 #### From Git:
 
 ```sh
-git clone https://github.com/MestreLion/srtcleaner
-cd stcleaner
+git clone https://github.com/MestreLion/strcleaner
+cd strcleaner
 pip install --user -e .
 ```
 
 #### From PyPi:
 
 ```sh
-pip install --user srtcleaner
+pip install --user strcleaner
 ```
 
 
