@@ -82,13 +82,14 @@ project_urls     = {"Bug Tracker": __url__ + "/issues", "Source Code": __url__}
 package_data     = {'': ['*.md', 'LICENSE*']}
 
 
+# Argument parsing
 epilog = """{__copyright__}
 License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
 """.format(**locals())
 
 
 # Possibly irrelevant
-__status__ = "Prototype"
+__status__ = "Production"
 
 
 # Derived data

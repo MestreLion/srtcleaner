@@ -1,11 +1,14 @@
-#!/usr/bin/env python3
-# This file is part of LegendasTV, see <https://github.com/MestreLion/legendastv>
-# Copyright (C) 2020 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
+#!/usr/bin/env python
+# This file is part of SRT Cleaner, see <https://github.com/MestreLion/legendastv>
+# Copyright (C) 2021 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 # License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
 
 import mimetypes
 import os
 import sys
+
+if sys.version_info[0] < 3:
+    from io import open
 
 from setuptools import find_packages, setup
 
