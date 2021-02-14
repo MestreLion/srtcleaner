@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# SRT Cleaner - Clean up SRT subtitle files removing ads and misplaced credits
 #
 #    Copyright (C) 2021 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 #
@@ -16,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. See <http://www.gnu.org/licenses/gpl.html>
 
-'''Tool to clean up SRT subtitles removing ads and misplaced credits'''
+"""Clean up SRT subtitle files removing ads, misplaced credits and fixing encoding"""
 
 import os
 import argparse
@@ -32,6 +31,10 @@ import sys
 # But must handle all 3 so we don't force user to create a venv. See detect_encoding()
 import magic
 import pysrt
+
+if __name__ == "__main__":
+    sys.exit("This module should not run directly as a script."
+             " Try `python -m srtcleaner`")
 
 from . import __about__ as a
 from . import apppaths
@@ -54,36 +57,41 @@ class ParseError(Exception):
 
 def parseargs(argv=None):
     parser = argparse.ArgumentParser(
+        prog=a.__title__, epilog=a.epilog,
         description='Clean subtitles deleting items that matches entries in blacklist file. '
             "Useful to remove ads and misplaced credits"
     )
 
-    parser.add_argument('--quiet', '-q', dest='loglevel',
-                        action="store_const", const=logging.WARNING, default=logging.INFO,
-                        help='suppress informative messages and summary statistics.')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-q', '--quiet', dest='loglevel',
+                       action="store_const", const=logging.WARNING, default=logging.INFO,
+                       help="Suppress informative messages and summary statistics.")
 
-    parser.add_argument('--verbose', '-v', dest='loglevel',
-                        action="store_const", const=logging.DEBUG,
-                        help='print additional information for each processed file. '
-                        'Overwrites --quiet.')
+    group.add_argument('-v', '--verbose', dest='loglevel',
+                       action="store_const", const=logging.DEBUG,
+                       help="Print additional information for each processed file.")
 
     parser.add_argument('--recursive', '-r',
                         action="store_true", default=False,
                         help='recurse inside directories.')
 
     parser.add_argument('--input-encoding', '-e', dest="encoding",
-                        help='encoding used in subtitles, if known. By default tries to autodetect encoding.')
+                        help="Encoding used in subtitles, if known."
+                             " By default tries to autodetect encoding.")
 
-    parser.add_argument('--input-fallback-encoding', '-f', dest="fallback",
+    parser.add_argument('--input-fallback-encoding', '-f', dest="fallback_encoding",
                         default="windows-1252",
-                        help='fallback encoding to read subtitles if encoding autodetection fails. [Default: %(default)s]')
+                        help="Fallback encoding to read subtitles"
+                            " if encoding autodetection fails. [Default: %(default)s]")
 
     parser.add_argument('--convert', '-c', dest="output_encoding",
-                        help='convert subtitle encoding. By default uses same encoding as input.')
+                        help="Convert subtitle encoding."
+                             " By default output uses the same encoding as the input.")
 
     parser.add_argument('--in-place', '-i',
                         action="store_true", default=False,
-                        help="Overwrite original file instead of outputting to standard output")
+                        help="Overwrite original file"
+                             " instead of outputting to standard output")
 
     parser.add_argument('--no-backup', '-B', dest="backup",
                         action="store_false", default=True,
@@ -91,16 +99,18 @@ def parseargs(argv=None):
 
     parser.add_argument('--no-rebuild-index', '-I', dest="rebuild_index",
                         action="store_false", default=True,
-                        help="do not rebuild subtitles indexes after removing items. "
-                            "Resulting SRT will not be strictly valid, although it will work in most players. "
-                            "Useful when debugging and comparing original and modified subtitles")
+                        help="Do not rebuild subtitles indexes after removing items."
+                             " Resulting SRT will not be strictly valid,"
+                             " although it will work in most players."
+                             " Useful when debugging for comparing"
+                             " original and modified subtitles")
 
-    parser.add_argument('--blacklist', '-b', dest="blacklistfile",
+    parser.add_argument('--blacklist', '-b', dest="blacklistpath",
                         default=os.path.join(apppaths.save_config_path(a.__title__),
                                              "{}.conf".format(a.__title__)),
                         help="Blacklist file path. [Default: %(default)s]")
 
-    parser.add_argument('paths',
+    parser.add_argument('srtpaths',
                         nargs='+',
                         help='SRT file(s) or dir(s) to modify')
 
@@ -195,27 +205,42 @@ def clean(subs, blacklistfile, rebuild_index=True):
     return bool(deleted)
 
 
-def main(argv=None):
-    args = parseargs(argv)
-    logging.basicConfig(level=args.loglevel, format='[%(levelname)-5s] %(message)s')
-    log.debug("Arguments: %s", args)
-
-    for path in find_subtitles(args.paths, recursive=args.recursive):
+def srtcleaner(
+    srtpaths, blacklistpath,
+    recursive=False,
+    encoding=None, fallback_encoding="windows-1252", output_encoding=None,
+    in_place=False, backup=True,
+    rebuild_index=False
+):
+    """Main function"""
+    for path in find_subtitles(srtpaths, recursive=recursive):
         log.info("Processing subtitle: '%s'", path)
         modified = False
         try:
-            subs = open_subtitle(path, encoding=args.encoding, fallback=args.fallback)
+            subs = open_subtitle(path,
+                                 encoding=encoding,
+                                 fallback=fallback_encoding)
         except ParseError as e:
             log.error("Could not open '%s': %s", path, e)
             continue
 
-        modified = clean(subs, args.blacklistfile, rebuild_index=args.rebuild_index)
+        modified = clean(subs, blacklistpath, rebuild_index=rebuild_index)
 
-        if modified or args.output_encoding:
-            if args.in_place:
-                if args.backup:
+        if modified or output_encoding:
+            if in_place:
+                if backup:
                     shutil.copy(path, "%s.%s.bak" % (path, __name__.split('.')[-1]))
-                subs.save(encoding=args.output_encoding)
+                subs.save(encoding=output_encoding)
             else:
                 for sub in subs:
-                    print(unicode(sub).encode(args.output_encoding or subs.encoding))
+                    print(unicode(sub).encode(output_encoding or subs.encoding))
+
+
+def cli(argv=None):
+    """CLI entry point"""
+    args = parseargs(argv)
+    logging.basicConfig(level=args.loglevel, format='[%(levelname)-5s] %(message)s')
+    log.debug("Arguments: %s", args)
+    args = vars(args)
+    args.pop('loglevel')
+    srtcleaner(**args)

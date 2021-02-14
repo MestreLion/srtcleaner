@@ -21,6 +21,6 @@
 
 import sys
 
-from . import srtcleaner
+from .srtcleaner import cli
 
-sys.exit(srtcleaner.main(sys.argv[1:]))
+sys.exit(cli())

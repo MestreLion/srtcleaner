@@ -69,19 +69,18 @@ classifiers      = [
     "Topic :: Utilities",
 ]
 keywords         = "subtitles srt library"
-entry_points     = {'console_scripts': ['{__title__} = {__title__}:main'.format(**locals())]}
+entry_points     = {
+    'console_scripts': ['{__title__} = {__title__}:cli'.format(**locals())]
+}
 install_requires = [
     'pysrt',
     'file-magic',
 ]
-extras_require   = {
-}
+extras_require   = {}
 readme           = "README.md"
 project_urls     = {"Bug Tracker": __url__ + "/issues", "Source Code": __url__}
 package_data     = {'': ['*.md', 'LICENSE*']}
 
-
-# ./cli.py
 
 epilog = """{__copyright__}
 License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
