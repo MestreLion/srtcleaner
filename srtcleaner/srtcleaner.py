@@ -229,7 +229,7 @@ def srtcleaner(
         if modified or output_encoding:
             if in_place:
                 if backup:
-                    shutil.copy(path, "%s.%s.bak" % (path, __name__.split('.')[-1]))
+                    shutil.copy(path, "{}.{}.bak".format(path, a.__title__))
                 subs.save(encoding=output_encoding)
             else:
                 for sub in subs:
