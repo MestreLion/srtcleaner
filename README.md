@@ -16,7 +16,7 @@ import srtcleaner
 srtfiles = ['/data/TVSeries/Cosmos/Cosmos.S01E01.srt',
             '/data/TVSeries/Cosmos/Cosmos.S01E02.srt']
 
-srtcleaner.srtcleaner([srtfiles], in_place=True, backup=False, convert='UTF-8')
+srtcleaner.srtcleaner(srtfiles, in_place=True, backup=False, convert='UTF-8')
 ```
 
 #### Command-line
@@ -62,9 +62,8 @@ optional arguments:
                         Blacklist file path. [Default:
                         /home/user/.config/srtcleaner/srtcleaner.conf]
 
-Copyright (C) 2021 Rodrigo Silva License: GPLv3 or later, at your choice. See
-<http://www.gnu.org/licenses/gpl>
-
+Copyright (C) 2021 Rodrigo Silva. License: GPLv3 or later, at your choice.
+$
 $ srtcleaner -v --in-place -B --convert 'UTF-8' '/data/series/Cosmos/Cosmos.S01E01.srt'
 [DEBUG] Auto-detected encoding: 'iso-8859-1'
 [INFO ] 20      00:00:45,653 --> 00:00:48,842   <b>UNITED       apresenta</b>
@@ -87,8 +86,8 @@ before using `srtcleaner`.
 A record can span over multiple lines, so use a blank line to separate each record.
 Its text is matched against each SRT entry by a simple `text in entry` comparison,
 in a _case-insensitive_ way. So if the whole text is found as part of an entry,
-the whole entry is removed from the SRT file. Escape sequences such as '\n' and
-'\t' are also interpreted, so you can use '\n' when you want to include a newline
+the whole entry is removed from the SRT file. Escape sequences such as `\n` and
+`\t` are also interpreted, so you can use `\n` when you want to include a newline
 at the end of the text to match.
 
 Example of a basic `srtcleaner.conf`:
@@ -148,15 +147,15 @@ Installing
 #### From Git:
 
 ```sh
-git clone https://github.com/MestreLion/strcleaner
-cd strcleaner
+git clone https://github.com/MestreLion/srtcleaner
+cd srtcleaner
 pip install --user -e .
 ```
 
 #### From PyPi:
 
 ```sh
-pip install --user strcleaner
+pip install --user srtcleaner
 ```
 
 

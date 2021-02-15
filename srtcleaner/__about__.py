@@ -29,7 +29,7 @@ Preferably only trivial string manipulations and basic list/tuple/dict operation
 
 __title__        = "srtcleaner"  # could be inferred from basename(dirname(__file__))
 __project__      = "SRT Cleaner"
-__description__  = "Clean up SRT subtitle files removing ads and misplaced credits"
+__description__  = "Clean up SRT subtitle files removing ads and misplaced credits."
 __url__          = "https://github.com/MestreLion/srtcleaner"
 
 __author__       = "Rodrigo Silva (MestreLion)"
@@ -83,8 +83,8 @@ package_data     = {'': ['*.md', 'LICENSE*']}
 
 
 # Argument parsing
-epilog = """{__copyright__}
-License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
+epilog = """{__copyright__}.
+License: GPLv3 or later, at your choice.
 """.format(**locals())
 
 
