@@ -44,13 +44,13 @@ kwargs = dict(
     long_description_content_type = mimetypes.guess_type(about['readme'])[0],
 )
 
-# # 'setup.py publish' shortcut.
-# if sys.argv[-1] == 'publish':
-#     for i in (2, 3):
-#         os.system('python{} -m pip install --user --upgrade setuptools wheel twine'.format(i))
-#         os.system('python{} setup.py sdist bdist_wheel'.format(i))
-#     os.system('twine upload dist/*')
-#     sys.exit()
+# 'setup.py publish' shortcut.
+if sys.argv[-1] == 'publish':
+    for i in (2, 3):
+        os.system('python{} -m pip install --user --upgrade setuptools wheel twine'.format(i))
+        os.system('python{} setup.py sdist bdist_wheel'.format(i))
+    os.system('twine upload dist/*')
+    sys.exit()
 
 if sys.argv[-1] == 'checkargs':
     import pprint
