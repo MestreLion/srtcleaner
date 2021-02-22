@@ -23,4 +23,5 @@ import sys
 
 from .srtcleaner import cli
 
-sys.exit(cli())
+if __name__ == '__main__':
+    sys.exit(cli())
