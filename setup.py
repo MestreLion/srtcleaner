@@ -12,6 +12,7 @@ if sys.version_info[0] < 3:
 
 from setuptools import find_packages, setup
 
+
 packages = find_packages(exclude=["tests", "tests.*"])
 project = packages[0]
 here = os.path.abspath(os.path.dirname(__file__))
@@ -48,6 +49,7 @@ kwargs = dict(
 if sys.argv[-1] == 'publish':
     for i in (2, 3):
         os.system('python{} -m pip install --user --upgrade setuptools wheel twine'.format(i))
+        os.system('rm -rf build */*.egg-info *.egg-info')
         os.system('python{} setup.py sdist bdist_wheel'.format(i))
     os.system('twine upload dist/*')
     sys.exit()
