@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # This file is part of SRT Cleaner, see <https://github.com/MestreLion/legendastv>
 # Copyright (C) 2021 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 # License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
@@ -8,7 +9,7 @@ import os
 import sys
 
 if sys.version_info[0] < 3:
-    from io import open
+    from io import open  # open(..., encoding) support for Python 2.x
 
 from setuptools import find_packages, setup
 
@@ -40,6 +41,7 @@ kwargs = dict(
     extras_require   = about['extras_require'],
     project_urls     = about['project_urls'],
     package_data     = about['package_data'],
+    options          = about['setup_options'],
     packages         = packages,
     long_description = readme,
     long_description_content_type = mimetypes.guess_type(about['readme'])[0],
@@ -47,10 +49,10 @@ kwargs = dict(
 
 # 'setup.py publish' shortcut.
 if sys.argv[-1] == 'publish':
-    for i in (2, 3):
-        os.system('python{} -m pip install --user --upgrade setuptools wheel twine'.format(i))
-        os.system('rm -rf build */*.egg-info *.egg-info')
-        os.system('python{} setup.py sdist bdist_wheel'.format(i))
+    python = sys.executable
+    os.system('{} -m pip install --user --upgrade setuptools wheel twine'.format(python))
+    os.system('rm -rf build */*.egg-info *.egg-info')
+    os.system('{} setup.py sdist bdist_wheel'.format(python))
     os.system('twine upload dist/*')
     sys.exit()
 

@@ -80,6 +80,7 @@ extras_require   = {}
 readme           = "README.md"
 project_urls     = {"Bug Tracker": __url__ + "/issues", "Source Code": __url__}
 package_data     = {'': ['*.md', 'LICENSE*']}
+setup_options    = {'bdist_wheel': {'universal': '1'}}
 
 
 # Argument parsing
