@@ -20,6 +20,10 @@ LINUX   = 'linux'
 MACOS   = 'darwin'
 UNKNOWN = ''  # Falsy value to allow `if not platform:`, as used below
 
+# Py2/Py3 octal literals compatibility
+MODE_ALL   = 511  # 0o777
+MODE_OWNER = 448  # 0o700
+
 # Let's pretend this module is 100% reusable: try top-level package
 _APPTITLE = __name__.split('.')[0] if '.' in __name__ else ""
 
@@ -80,7 +84,7 @@ else:
 if _sys.version_info[0] >= 3:
     makedirs = _os.makedirs
 else:
-    def makedirs(name, mode=0o777 , exist_ok=False):
+    def makedirs(name, mode=MODE_ALL , exist_ok=False):
         try:
             _os.makedirs(name, mode)
         except OSError as e:
@@ -88,7 +92,7 @@ else:
                 raise
 
 
-def _save_path(path, apptitle="", vendor=None, mode=0o777, suffix="", create=CREATE_DIRS):
+def _save_path(path, apptitle="", vendor=None, mode=MODE_ALL, suffix="", create=CREATE_DIRS):
     apptitle = apptitle or _APPTITLE
     if not apptitle or apptitle.startswith('/') or apptitle == '__main__':
         raise ValueError("Invalid App Title: {}".format(apptitle))
@@ -123,7 +127,7 @@ def save_config_path(apptitle="", vendor=None, create=CREATE_DIRS):
 
     Use this when saving or updating application settings and configuration.
     """
-    return _save_path(config_home, apptitle, vendor, mode=0o700, create=create)
+    return _save_path(config_home, apptitle, vendor, mode=MODE_OWNER, create=create)
 
 
 def save_cache_path(apptitle="", vendor=None, create=CREATE_DIRS):
@@ -143,4 +147,4 @@ def save_log_path(apptitle="", vendor=None, create=CREATE_DIRS):
     if   platform == LINUX:   suffix = 'log'
     elif platform == WINDOWS: suffix = 'Logs'
     else:                     suffix = ''
-    return _save_path(log_home, apptitle, vendor, mode=0o700, suffix=suffix, create=create)
+    return _save_path(log_home, apptitle, vendor, mode=MODE_OWNER, suffix=suffix, create=create)
