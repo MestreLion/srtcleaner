@@ -2,9 +2,10 @@
 #
 # Nautilus script for SRT Cleaner
 #
-# Copy or symlink to '~/.local/share/nautilus/scripts', or to your system equivalent
+# Copy or symlink to '~/.local/share/nautilus/scripts' or to your system equivalent,
+#   or run `srtcleaner --install-nautilus-script`
 #
-# Copyright (C) 2011 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
+# Copyright (C) 2021 Rodrigo Silva (MestreLion) <linux@rodrigosilva.com>
 # License: GPLv3 or later, at your choice. See <http://www.gnu.org/licenses/gpl>
 
 srtcleaner --recursive --convert UTF-8 --no-backup --in-place "$@" 2>&1 |

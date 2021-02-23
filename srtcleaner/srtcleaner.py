@@ -20,6 +20,7 @@
 import os
 import argparse
 import logging
+import pkgutil
 import shutil
 import sys
 
@@ -39,6 +40,8 @@ if __name__ == "__main__":
 from . import __about__ as a
 from . import apppaths
 
+
+NAUTILUS_SCRIPT = a.__project__
 
 log = logging.getLogger(__name__)
 
@@ -110,11 +113,37 @@ def parseargs(argv=None):
                                              "{}.conf".format(a.__title__)),
                         help="Blacklist file path. [Default: %(default)s]")
 
+    parser.add_argument('--install-nautilus-script', '-N', dest='nautilus',
+                        nargs='?', const=NAUTILUS_SCRIPT,
+                        metavar='PATH',
+                        help="Install Nautilus Script for SRT Cleaner at %(metavar)s."
+                            " %(metavar)s can be either the script basename, optionally"
+                            " prefixed with subdirs, that will be joined to your default"
+                            " nautilus scripts path; or a full absolute path, including"
+                            " the script basename, to install at an alternate location."
+                            " [Default: %(const)r]")
+
     parser.add_argument('srtpaths',
-                        nargs='+',
+                        nargs='*', metavar='PATH',
                         help='SRT file(s) or dir(s) to modify')
 
     return parser.parse_args(argv)
+
+
+def install_nautilus_script(path):
+    if not apppaths.platform == apppaths.LINUX:
+        log.warning("Installing Nautilus Script in a non-Linux platform"
+                    " is most likely pointless")
+    path = os.path.join(apppaths.data_home, 'nautilus', 'scripts', path)
+    apppaths.makedirs(os.path.dirname(path), exist_ok=True)
+    log.debug("Nautilus Script path: %r", path)
+    with open(path, 'wb') as f:
+        f.write(pkgutil.get_data(__name__, 'data/nautilus-script.sh'))
+    # Set executable flag
+    mode = os.stat(path).st_mode
+    mode |= (mode & 292) >> 2  # copy R bits to X. 292 = 0o444 (Py3) / 0444 (Py2)
+    os.chmod(path, mode)
+    return path
 
 
 def find_subtitles(paths, recursive=False):
@@ -243,4 +272,15 @@ def cli(argv=None):
     log.debug("Arguments: %s", args)
     args = vars(args)
     args.pop('loglevel')
+
+    if args['nautilus']:
+        path = install_nautilus_script(args['nautilus'])
+        log.info("Nautilus script installed to %r", path)
+        return
+    args.pop('nautilus')
+
+    if not args['srtpaths']:
+        log.error("No paths specified, see --help for usage.")
+        return 1
+
     srtcleaner(**args)
