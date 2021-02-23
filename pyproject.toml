@@ -1,0 +1,9 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+# As of 2021-02 (pip 21.0.1, setuptools 53.0.0), it seems impossible to have
+# an editable install when specifying 'build-backend', which triggers pip's
+# PEP 517 mode, without an active virtualenv. Workaround is to either remove
+# this file (not possible when using tools like black), use a venv, or disable
+# 'build-backend' *and* install using `pip3 install -e . --no-use-pep517`
+#build-backend = "setuptools.build_meta"
