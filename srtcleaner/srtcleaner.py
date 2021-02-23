@@ -214,7 +214,7 @@ def clean(subs, blacklistfile, rebuild_index=True):
         with open(blacklistfile, 'r', encoding='utf-8') as fp:
             blacklist = fp.read().strip().split('\n\n')
     except IOError:
-        return
+        return False
 
     deleted = []
     for i, sub in reversed(list(enumerate(subs))):
@@ -224,14 +224,16 @@ def clean(subs, blacklistfile, rebuild_index=True):
                 del subs[i]
                 break
 
-    if deleted:
-        for item in reversed(deleted):
-            log.info(unicode(item).replace('\n', '\t').strip())
-        log.info("%d items deleted", len(deleted))
-        if rebuild_index:
-            subs.clean_indexes()
+    if not deleted:
+        return False
 
-    return bool(deleted)
+    for item in reversed(deleted):
+        log.info(unicode(item).replace('\n', '\t').strip())
+    log.info("%d items deleted", len(deleted))
+    if rebuild_index:
+        subs.clean_indexes()
+
+    return True
 
 
 def srtcleaner(
