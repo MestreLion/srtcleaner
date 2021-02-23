@@ -80,7 +80,10 @@ extras_require   = {}
 readme           = "README.md"
 project_urls     = {"Bug Tracker": __url__ + "/issues", "Source Code": __url__}
 package_data     = {'': ['data/*']}
-setup_options    = {'bdist_wheel': {'universal': '1'}}
+setup_options    = {  # replaces setup.cfg
+    'metadata'   : {'license_file': 'LICENSE'},  # Include in sdist without MANIFEST.in
+    'bdist_wheel': {'universal': '1'},  # For pure-python, compatible with both 2 and 3
+}
 
 
 # Argument parsing

@@ -1,5 +1,8 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = [
+    "setuptools>=40.8",  # Include license_file in sdist
+    "wheel"
+]
 
 # As of 2021-02 (pip 21.0.1, setuptools 53.0.0), it seems impossible to have
 # an editable install when specifying 'build-backend', which triggers pip's
