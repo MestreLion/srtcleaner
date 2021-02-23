@@ -120,6 +120,7 @@ L.O.T.S\n
 
 Requirements
 ------------
+- Python 2.7 or 3.6+
 - [Pysrt](https://github.com/byroot/pysrt), to parse the SRT files
 - [file-magic](https://github.com/file/file), to detect encoding.
 
@@ -149,13 +150,15 @@ Installing
 ```sh
 git clone https://github.com/MestreLion/srtcleaner
 cd srtcleaner
-pip install --user -e .
+python3 -m srtcleaner [ARGS...]           # Run/Test prior to installing
+pip3 install --user .                     # Regular install, OR
+pip3 install --user --no-use-pep517 -e .  # Editable/Development install
 ```
 
 #### From PyPi:
 
 ```sh
-pip install --user srtcleaner
+pip3 install --user srtcleaner
 ```
 
 
