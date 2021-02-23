@@ -61,4 +61,5 @@ if sys.argv[-1] == 'checkargs':
     pprint.pprint(kwargs)
     sys.exit()
 
-setup(**kwargs)
+if __name__ == '__main__':
+    setup(**kwargs)
