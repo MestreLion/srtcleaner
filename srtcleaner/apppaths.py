@@ -78,9 +78,9 @@ else:
 
 
 if _sys.version_info[0] >= 3:
-    _makedirs = _os.makedirs
+    makedirs = _os.makedirs
 else:
-    def _makedirs(name, mode=0o777 , exist_ok=False):
+    def makedirs(name, mode=0o777 , exist_ok=False):
         try:
             _os.makedirs(name, mode)
         except OSError as e:
@@ -102,7 +102,7 @@ def _save_path(path, apptitle="", vendor=None, mode=0o777, suffix="", create=CRE
     if suffix:
         path = _os.path.join(path, suffix)
     if create:
-        _makedirs(path, mode, exist_ok=True)
+        makedirs(path, mode, exist_ok=True)
     return path
 
 
