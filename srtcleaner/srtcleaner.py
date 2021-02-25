@@ -18,6 +18,7 @@
 """Clean up SRT subtitle files removing ads, misplaced credits and fixing encoding"""
 
 import argparse
+import inspect
 import logging
 import os
 import pkgutil
@@ -49,12 +50,16 @@ log = logging.getLogger(__name__)
 if sys.version_info[0] >= 3:
     PY3 = True
     unicode = str
+    def fsig(f):
+        return inspect.getfullargspec(f)[0]
     def printsubs(subs, encoding=None):  # @UnusedVariable
         for sub in subs:
             print(sub)
 else:
     PY3 = False
     from io import open
+    def fsig(f):
+        return inspect.getargspec(f)[0]
     def printsubs(subs, encoding=None):
         for sub in subs:
             print(unicode(sub).encode(encoding or subs.encoding))
@@ -304,23 +309,20 @@ def cli(argv=None):
     args = parseargs(argv)
     logging.basicConfig(level=args.loglevel, format='[%(levelname)-5s] %(message)s')
     log.debug("Arguments: %s", args)
-    args = vars(args)
-    args.pop('loglevel')
 
-    if args['nautilus']:
-        path = install_nautilus_script(args['nautilus'])
+    if args.nautilus:
+        path = install_nautilus_script(args.nautilus)
         log.info("Nautilus script installed to %r", path)
         return
-    args.pop('nautilus')
 
-    if not args['srtpaths']:
+    if not args.srtpaths:
         log.error("No paths specified, see --help for usage.")
         return 1
 
-    paths = check_config(args['blacklistpath'])
+    paths = check_config(args.blacklistpath)
     if paths:
         log.info("A basic blacklist file was created at %r,"
                  " edit it to customize. See %r for details.",
                  *paths)
 
-    srtcleaner(**args)
+    srtcleaner(**{_: getattr(args, _) for _ in fsig(srtcleaner)})
