@@ -35,7 +35,7 @@ __url__          = "https://github.com/MestreLion/srtcleaner"
 __author__       = "Rodrigo Silva (MestreLion)"
 __email__        = "linux@rodrigosilva.com"
 
-__version__      = "1.0.2"
+__version__      = "1.1.0"
 
 __license__      = "GPLv3+"
 __copyright__    = "Copyright (C) 2021 Rodrigo Silva"
