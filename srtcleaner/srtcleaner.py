@@ -17,9 +17,9 @@
 
 """Clean up SRT subtitle files removing ads, misplaced credits and fixing encoding"""
 
-import os
 import argparse
 import logging
+import os
 import pkgutil
 import shutil
 import sys
@@ -49,9 +49,15 @@ log = logging.getLogger(__name__)
 if sys.version_info[0] >= 3:
     PY3 = True
     unicode = str
+    def printsubs(subs, encoding=None):  # @UnusedVariable
+        for sub in subs:
+            print(sub)
 else:
     PY3 = False
     from io import open
+    def printsubs(subs, encoding=None):
+        for sub in subs:
+            print(unicode(sub).encode(encoding or subs.encoding))
 
 
 class ParseError(Exception):
@@ -263,8 +269,7 @@ def srtcleaner(
                     shutil.copy(path, "{}.{}.bak".format(path, a.__title__))
                 subs.save(encoding=output_encoding)
             else:
-                for sub in subs:
-                    print(unicode(sub).encode(output_encoding or subs.encoding))
+                printsubs(subs, encoding=output_encoding)
 
 
 def cli(argv=None):
