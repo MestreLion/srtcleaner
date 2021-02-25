@@ -90,6 +90,10 @@ the whole entry is removed from the SRT file. Escape sequences such as `\n` and
 `\t` are also interpreted, so you can use `\n` when you want to include a newline
 at the end of the text to match.
 
+Leave the default blacklist empty for no SRT entry removal, for example when using
+SRT Cleaner just for converting the SRT file encoding, otherwise SRT Cleaner might
+re-create the blacklist with a basic set of records.
+
 Example of a basic `srtcleaner.conf`:
 ```
 OpenSubtitles.org

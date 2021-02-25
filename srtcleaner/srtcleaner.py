@@ -115,8 +115,7 @@ def parseargs(argv=None):
                              " original and modified subtitles")
 
     parser.add_argument('--blacklist', '-b', dest="blacklistpath",
-                        default=os.path.join(apppaths.save_config_path(a.__title__),
-                                             "{}.conf".format(a.__title__)),
+                        default=get_blacklist_path(),
                         help="Blacklist file path. [Default: %(default)s]")
 
     parser.add_argument('--install-nautilus-script', '-N', dest='nautilus',
@@ -150,6 +149,34 @@ def install_nautilus_script(path):
     mode |= (mode & 292) >> 2  # copy R bits to X. 292 = 0o444 (Py3) / 0444 (Py2)
     os.chmod(path, mode)
     return path
+
+
+def get_blacklist_path(create=False):
+    return os.path.join(apppaths.save_config_path(a.__title__, create=create),
+                        "{}.conf".format(a.__title__))
+
+
+def check_config(path):
+    """Create the blacklist template if needed"""
+    if path != get_blacklist_path() or os.path.isfile(path):
+        # Not the default or default alredy exists, nothing to do
+        return
+
+    # Copy the default blacklist template
+    path = get_blacklist_path(create=True)
+    log.debug("Default blacklist path: %r", path)
+    with open(path, 'w') as f:
+        f.write(unicode(pkgutil.get_data(__name__, 'data/srtcleaner.template.conf'),
+                        encoding='utf-8'))
+
+    # Copy blacklist README
+    readme = 'README.conf.txt'
+    readme_path = os.path.join(os.path.dirname(path), readme)
+    with open(readme_path, 'w') as f:
+        f.write(unicode(pkgutil.get_data(__name__, os.path.join('data', readme)),
+                        encoding='utf-8'))
+
+    return path, readme_path
 
 
 def find_subtitles(paths, recursive=False):
@@ -289,5 +316,11 @@ def cli(argv=None):
     if not args['srtpaths']:
         log.error("No paths specified, see --help for usage.")
         return 1
+
+    paths = check_config(args['blacklistpath'])
+    if paths:
+        log.info("A basic blacklist file was created at %r,"
+                 " edit it to customize. See %r for details.",
+                 *paths)
 
     srtcleaner(**args)
