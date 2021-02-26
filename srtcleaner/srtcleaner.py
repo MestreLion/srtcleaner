@@ -50,6 +50,7 @@ log = logging.getLogger(__name__)
 if sys.version_info[0] >= 3:
     PY3 = True
     unicode = str
+    basestring = (str, bytes)
 
     def fsig(f):
         return inspect.getfullargspec(f)[0]
@@ -193,6 +194,9 @@ def check_config(path):
 def find_subtitles(paths, recursive=False):
     def ext(p):
         return os.path.splitext(p)[1][1:].lower()
+
+    if isinstance(paths, basestring):
+        paths = [paths]
 
     for path in paths:
         if os.path.isdir(path):
