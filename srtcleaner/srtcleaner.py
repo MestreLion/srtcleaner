@@ -292,7 +292,32 @@ def srtcleaner(
     in_place=False, backup=True,
     rebuild_index=False
 ):
-    """Main function"""
+    """Remove entries in SRT subtitle files and optionally convert encoding
+
+    Given an iterable of SRT files/dirs and a blacklist file, remove from the
+    subtitles all entries matching any of records in the blacklist.
+
+    <srtpaths> is an iterable of SRT files and directories. For directories,
+    process all files with 'srt' extension and, if <recursive>, all subdirs too.
+    As a special case for a single file/dir, if <srtpaths> is a string, consider
+    it a single-item list.
+
+    <blacklistpath> is the path of the blacklist config file. If None, use the
+    default, platform-dependent path.
+
+    <encoding> sets the SRT input file(s) text encoding, or None to auto-detect
+    its encoding. If auto-detection fails, assume <fallback_encoding>.
+
+    <output_encoding>, if not None, converts the output encoding, otherwise
+    use the same same encoding as the input.
+
+    By default output to stdout, <in_place> to modify the input file, creating
+    a backup file by default. <backup> is ignored if not <in_place>.
+
+    <rebuild_index>, by default True, re-number the SRT entries index after
+    deleting entries. Turning it off can be useful when debugging to compare
+    original and modified subtitles.
+    """
     if blacklistpath is None:
         blacklistpath = get_blacklist_path()
 
