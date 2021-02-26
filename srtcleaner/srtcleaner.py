@@ -50,16 +50,22 @@ log = logging.getLogger(__name__)
 if sys.version_info[0] >= 3:
     PY3 = True
     unicode = str
+
     def fsig(f):
         return inspect.getfullargspec(f)[0]
-    def printsubs(subs, encoding=None):  # @UnusedVariable
+
+    # noinspection PyUnusedLocal
+    def printsubs(subs, encoding=None):
         for sub in subs:
             print(sub)
 else:
     PY3 = False
     from io import open
+
     def fsig(f):
+        # noinspection PyDeprecation
         return inspect.getargspec(f)[0]
+
     def printsubs(subs, encoding=None):
         for sub in subs:
             print(unicode(sub).encode(encoding or subs.encoding))
@@ -72,8 +78,8 @@ class ParseError(Exception):
 def parseargs(argv=None):
     parser = argparse.ArgumentParser(
         prog=a.__title__, epilog=a.epilog,
-        description='Clean subtitles deleting items that matches entries in blacklist file. '
-            "Useful to remove ads and misplaced credits"
+        description="Clean subtitles deleting items that matches entries in blacklist file."
+                    " Useful to remove ads and misplaced credits."
     )
 
     group = parser.add_mutually_exclusive_group()
@@ -96,7 +102,7 @@ def parseargs(argv=None):
     parser.add_argument('--input-fallback-encoding', '-f', dest="fallback_encoding",
                         default="windows-1252",
                         help="Fallback encoding to read subtitles"
-                            " if encoding autodetection fails. [Default: %(default)s]")
+                             " if encoding autodetection fails. [Default: %(default)s]")
 
     parser.add_argument('--convert', '-c', dest="output_encoding",
                         help="Convert subtitle encoding."
@@ -127,11 +133,11 @@ def parseargs(argv=None):
                         nargs='?', const=NAUTILUS_SCRIPT,
                         metavar='PATH',
                         help="Install Nautilus Script for SRT Cleaner at %(metavar)s."
-                            " %(metavar)s can be either the script basename, optionally"
-                            " prefixed with subdirs, that will be joined to your default"
-                            " nautilus scripts path; or a full absolute path, including"
-                            " the script basename, to install at an alternate location."
-                            " [Default: %(const)r]")
+                             " %(metavar)s can be either the script basename, optionally"
+                             " prefixed with subdirs, that will be joined to your default"
+                             " nautilus scripts path; or a full absolute path, including"
+                             " the script basename, to install at an alternate location."
+                             " [Default: %(const)r]")
 
     parser.add_argument('srtpaths',
                         nargs='*', metavar='PATH',
@@ -164,7 +170,7 @@ def get_blacklist_path(create=False):
 def check_config(path):
     """Create the blacklist template if needed"""
     if path != get_blacklist_path() or os.path.isfile(path):
-        # Not the default or default alredy exists, nothing to do
+        # Not the default or default already exists, nothing to do
         return
 
     # Copy the default blacklist template
@@ -185,8 +191,8 @@ def check_config(path):
 
 
 def find_subtitles(paths, recursive=False):
-    def ext(path):
-        return os.path.splitext(path)[1][1:].lower()
+    def ext(p):
+        return os.path.splitext(p)[1][1:].lower()
 
     for path in paths:
         if os.path.isdir(path):
@@ -200,12 +206,10 @@ def find_subtitles(paths, recursive=False):
             if ext(path) == 'srt':
                 yield path
             else:
-                log.warn("Not an SRT file: '%s'", path)
+                log.warning("Not an SRT file: '%s'", path)
 
 
 def detect_encoding(filename, fallback=None):
-    encoding = ""
-
     # file-magic, from `libmagic` upstream
     if hasattr(magic.Magic, "file"):
         ms = magic.open(magic.MAGIC_MIME_ENCODING)  # @UndefinedVariable
@@ -215,12 +219,14 @@ def detect_encoding(filename, fallback=None):
 
     # python-magic
     elif hasattr(magic.Magic, "from_file"):
+        # noinspection PyArgumentList
         ms = magic.Magic(mime_encoding=True)
         encoding = ms.from_file(filename)
         del ms  # force automatic close()
 
     # filemagic
     else:
+        # noinspection PyArgumentList
         with magic.Magic(flags=magic.MAGIC_MIME_ENCODING) as m:
             encoding = m.id_filename(filename)
 
@@ -233,9 +239,10 @@ def detect_encoding(filename, fallback=None):
 
 
 def open_subtitle(filename, encoding=None, fallback=None):
-    '''Wrapper to pysrt.open() with encoding auto-detection
-        could eventually be replaced with another parser to avoid this encoding madness
-    '''
+    """Wrapper to pysrt.open() with encoding auto-detection
+
+    Could eventually be replaced with another parser to avoid this encoding madness
+    """
     if encoding is None:
         encoding = detect_encoding(filename, fallback=fallback)
     else:
@@ -284,7 +291,6 @@ def srtcleaner(
     """Main function"""
     for path in find_subtitles(srtpaths, recursive=recursive):
         log.info("Processing subtitle: '%s'", path)
-        modified = False
         try:
             subs = open_subtitle(path,
                                  encoding=encoding,
