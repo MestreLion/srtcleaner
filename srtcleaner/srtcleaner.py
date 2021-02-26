@@ -282,13 +282,16 @@ def clean(subs, blacklistfile, rebuild_index=True):
 
 
 def srtcleaner(
-    srtpaths, blacklistpath,
+    srtpaths, blacklistpath=None,
     recursive=False,
     encoding=None, fallback_encoding="windows-1252", output_encoding=None,
     in_place=False, backup=True,
     rebuild_index=False
 ):
     """Main function"""
+    if blacklistpath is None:
+        blacklistpath = get_blacklist_path()
+
     for path in find_subtitles(srtpaths, recursive=recursive):
         log.info("Processing subtitle: '%s'", path)
         try:
